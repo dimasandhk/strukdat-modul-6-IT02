@@ -28,6 +28,7 @@ class Activity {
         }
 
         // Getter
+        string getTitle() { return title; }
         mark getColor() { return color; }
         string getColorString(mark inpColor) {
             string res;
@@ -135,6 +136,7 @@ class Event : public Activity {
         int getEndDateYear() {
             return endDate.year;
         }
+        string getLocation() { return location; }
         string getDateString(Date inpDate) {
             string res = to_string(inpDate.day) + "/" + to_string(inpDate.month) + "/" + to_string(inpDate.year);
             return res;
@@ -150,7 +152,7 @@ class Event : public Activity {
             res += desc;
 
             if (includeColor) {
-                res += "Color: " + getColorString(color) + "\n";
+                res += "\nColor: " + getColorString(color) + "\n";
             }
 
             return res;
@@ -160,6 +162,11 @@ class Event : public Activity {
 struct DateTime {
     Date date;
     Time time;
+};
+
+struct DateTimeWithWeek {
+    int day, month, year, week;
+    int hour, minute;
 };
 
 class Task : public Activity {
@@ -194,14 +201,15 @@ class Task : public Activity {
         }
 
         // Getter
-        int getDate() {
-            return deadline.date.day;
-        }
-        int getMonth() {
-            return deadline.date.month;
-        }
-        int getYear() {
-            return deadline.date.year;
+        DateTimeWithWeek getDeadline() {
+            DateTimeWithWeek res;
+            res.day = deadline.date.day;
+            res.month = deadline.date.month;
+            res.year = deadline.date.year;
+            res.week = 0;
+            res.hour = deadline.time.hour;
+            res.minute = deadline.time.minute;
+            return res;
         }
         string getDateTimeString() {
             string resDate = to_string(deadline.date.day) + "/" + to_string(deadline.date.month) + "/" + to_string(deadline.date.year) + " ";
@@ -231,12 +239,59 @@ class EventList {
         vector<Event> eventList;
 
     public:
+        // vector manipulation
         void addEvent(Event inpEvent) {
             eventList.push_back(inpEvent);
         }
 
+        void updateTitle(string oldTitle, string newTitle) {
+            for (int i = 0; i < eventList.size(); i++) {
+                if (eventList[i].getTitle() == oldTitle) {
+                    eventList[i].setTitle(newTitle);
+                    return;
+                }
+            }
+        }
+
+        void updateDesc(string title, string newDesc) {
+            for (int i = 0; i < eventList.size(); i++) {
+                if (eventList[i].getTitle() == title) {
+                    eventList[i].setDesc(newDesc);
+                    return;
+                }
+            }
+        }
+
+        void removeEventByTitle(string title) {
+            for (int i = 0; i < eventList.size(); i++) {
+                if (eventList[i].getTitle() == title) {
+                    eventList.erase(eventList.begin() + i);
+                    return;
+                }
+            }
+        }
+
         void removeEvent(int idx) {
             eventList.erase(eventList.begin() + idx);
+        }
+
+        // show event list
+        void searchByTitle(string title) {
+            cout << "Events with title " << title << ": " << endl;
+            for (int i = 0; i < eventList.size(); i++) {
+                if (eventList[i].getTitle() == title) {
+                    cout << eventList[i].getDetail(true) << endl;
+                }
+            }
+        }
+
+        void printBasedOnLocation(string location) {
+            cout << "Events in " << location << ": " << endl;
+            for (int i = 0; i < eventList.size(); i++) {
+                if (eventList[i].getLocation() == location) {
+                    cout << eventList[i].getDetail(true) << endl;
+                }
+            }
         }
 
         void printBasedOnColor(mark color) {
@@ -311,25 +366,119 @@ class EventList {
         }
 };
 
-// class TaskList {
-//     private:
-//         vector<Task> taskList;
+class TaskList {
+    private:
+        vector<Task> taskList;
 
-//     public:
-//         void addTask(Task inpTask) {
-//             taskList.push_back(inpTask);
-//         }
+    public:
+        // vector manipulation
+        void addTask(Task inpTask) {
+            taskList.push_back(inpTask);
+        }
 
-//         void removeTask(int idx) {
-//             taskList.erase(taskList.begin() + idx);
-//         }
+        void updateTitle(string oldTitle, string newTitle) {
+            for (int i = 0; i < taskList.size(); i++) {
+                if (taskList[i].getTitle() == oldTitle) {
+                    taskList[i].setTitle(newTitle);
+                    return;
+                }
+            }
+        }
 
-//         void printTaskList() {
-//             for (int i = 0; i < taskList.size(); i++) {
-//                 cout << taskList[i].getDetail(true) << endl;
-//             }
-//         }
-// };
+        void removeTaskByTitle(string title) {
+            for (int i = 0; i < taskList.size(); i++) {
+                if (taskList[i].getTitle() == title) {
+                    taskList.erase(taskList.begin() + i);
+                    return;
+                }
+            }
+        }
+
+        void removeTask(int idx) {
+            taskList.erase(taskList.begin() + idx);
+        }
+
+        // show task list
+        void searchByTitle(string title) {
+            cout << "Tasks with title " << title << ": " << endl;
+            for (int i = 0; i < taskList.size(); i++) {
+                if (taskList[i].getTitle() == title) {
+                    cout << taskList[i].getDetail(true) << endl;
+                }
+            }
+        }
+
+        void printBasedOnColor(mark color) {
+            cout << "Tasks with color " << color << ": " << endl;
+            for (int i = 0; i < taskList.size(); i++) {
+                if (taskList[i].getColor() == color) {
+                    cout << taskList[i].getDetail(true) << endl;
+                }
+            }
+        }
+
+        void printTaskList() {
+            cout << "All tasks:" << endl;
+            for (int i = 0; i < taskList.size(); i++) {
+                cout << taskList[i].getDetail(true) << endl;
+            }
+        }
+
+        void printNearestTask() {
+            cout << "Nearest Task (this week): " << endl;
+            for (int i = 0; i < taskList.size(); i++) {
+                DateWithWeek currentTime = taskList[i].getCurrentTime();
+                int currentYear = currentTime.year;
+                int currentMonth = currentTime.month;
+                int currentDay = currentTime.day;
+                int currentWeek = currentTime.week;
+
+                // Check if the task is this week
+                if (taskList[i].getDeadline().year == currentYear && taskList[i].getDeadline().month == currentMonth && taskList[i].getDeadline().day >= currentDay && taskList[i].getDeadline().day <= currentDay + 7) {
+                    cout << taskList[i].getDetail(true) << endl;
+                    return;
+                }
+            }
+        }
+
+        void printTaskList(ViewType viewType) {
+            if (viewType == MONTH) {
+                cout << "Viewing tasks in month view: " << endl;
+            } else if (viewType == WEEK) {
+                cout << "Viewing tasks in week view: " << endl;
+            } else if (viewType == DAY) {
+                cout << "Viewing tasks in day view: " << endl;
+            } else if (viewType == YEAR) {
+                cout << "Viewing tasks in year view: " << endl;
+            }
+
+            for (int i = 0; i < taskList.size(); i++) {
+                DateWithWeek currentTime = taskList[i].getCurrentTime();
+                int currentYear = currentTime.year;
+                int currentMonth = currentTime.month;
+                int currentDay = currentTime.day;
+                int currentWeek = currentTime.week;
+
+                if (viewType == MONTH) {
+                    if (taskList[i].getDeadline().month == currentMonth) {
+                        cout << taskList[i].getDetail(true) << endl;
+                    }
+                } else if (viewType == WEEK) {
+                    if (taskList[i].getDeadline().month == currentMonth && taskList[i].getDeadline().day >= currentDay && taskList[i].getDeadline().day <= currentDay + 7) {
+                        cout << taskList[i].getDetail(true) << endl;
+                    }
+                } else if (viewType == DAY) {
+                    if (taskList[i].getDeadline().month == currentMonth && taskList[i].getDeadline().day == currentDay) {
+                        cout << taskList[i].getDetail(true) << endl;
+                    }
+                } else if (viewType == YEAR) {
+                    if (taskList[i].getDeadline().year == currentYear) {
+                        cout << taskList[i].getDetail(true) << endl;
+                    }
+                }
+            }
+        }
+};
 
 int main() {
     Date startDate = {1, 6, 2024};
