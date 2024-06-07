@@ -148,7 +148,7 @@ class Event : public Activity {
             string res = title + " (" + location + ")" ":\n" + "Waktu: ";
             string resStartDate = getDateString(startDate);
             string resEndDate = getDateString(endDate);
-            res += resStartDate + " - " + resEndDate + "\n";
+            res += resStartDate + " - " + resEndDate + "\nDesc:\n";
             res += desc;
 
             if (includeColor) {
@@ -220,9 +220,9 @@ class Task : public Activity {
             return getDetail(false); // Overload
         }
         string getDetail(bool includeColor) override {
-            string res = title + ":\n" + "Deadline: ";
-            res += getDateTimeString() + "\n";
-            res += desc;
+            string res = title + " | " + "Deadline: ";
+            res += getDateTimeString() + "\nDesc: \n";
+            res += desc + "\n";
 
             if (includeColor) {
                 res += "Color: " + getColorString(color) + "\n";
@@ -385,6 +385,15 @@ class TaskList {
             }
         }
 
+        void updateDesc(string title, string newDesc) {
+            for (int i = 0; i < taskList.size(); i++) {
+                if (taskList[i].getTitle() == title) {
+                    taskList[i].setDesc(newDesc);
+                    return;
+                }
+            }
+        }
+
         void removeTaskByTitle(string title) {
             for (int i = 0; i < taskList.size(); i++) {
                 if (taskList[i].getTitle() == title) {
@@ -480,29 +489,203 @@ class TaskList {
         }
 };
 
+void handleEventMenu();
+void handleTaskMenu();
+
+EventList eventList;
+TaskList taskList;
+
 int main() {
-    Date startDate = {1, 6, 2024};
-    Date endDate = {2, 6, 2024};
-    Date startDatelg = {1, 6, 2024};
-    Date endDate2 = {2, 6, 2024};
-    Event event1("Event 1", "Deskripsi Event 1", RED, "Jakarta", startDate, endDate);
-    Event event2("Event 2", "Deskripsi Event 2", BLUE, "Bandung", startDate, endDate);
-    Event event3("Event 3", "Deskripsi Event 3", GREEN, "Surabaya", startDatelg, endDate2);
+    /* 
+        IT 02 Strukdat Final Project:
+        - Dimas Andhika Diputra
+        - Ryan Adya Purwanto
+        - Nafi Firdaus
+    */
 
-    EventList eventList;
-    eventList.addEvent(event1);
-    eventList.addEvent(event2);
-    eventList.addEvent(event3);
+    cout << "-----------------------------------------------------------" << endl;
+    cout << "------------ Event & Task Management System ---------------" << endl;
+    cout << "-----------------------------------------------------------" << endl;
+    cout << "------- Google Calendar System implemented with OOP -------" << endl;
+    cout << "-----------------------------------------------------------" << endl;
 
-    // Print all events
-    eventList.printEventList(MONTH);
+    string choice;
+    do {
+        cout << "Menu: " << endl;
+        cout << "1. Event Menu" << endl;
+        cout << "2. Task Menu" << endl;
+        cout << "Q. Quit" << endl;
+        
+        cout << "Choice: ";
+        cin >> choice;
+        transform(choice.begin(), choice.end(), choice.begin(), ::toupper);
 
-    // Remove the first event
-    eventList.removeEvent(0);
-
-    cout << endl << "-------------------------" << endl;
-    // Print all events again to verify the first event was removed
-    eventList.printEventList();
+        if (choice == "1") {
+            handleEventMenu();
+        } else if (choice == "2") {
+            handleTaskMenu();
+        } else if (choice == "Q") {
+            cout << "Goodbye!" << endl;
+            break;
+        } else {
+            cout << "Invalid choice!" << endl;
+        }
+    } while (choice != "q" || choice != "Q");
 
     return 0;
+}
+
+void handleEventMenu() {
+    cout << "Event Menu: " << endl;
+    cout << "1. Add Event" << endl;
+    cout << "2. Update Event Title" << endl;
+    cout << "3. Update Event Description" << endl;
+    cout << "4. Remove Event" << endl;
+    cout << "5. Search Event by Title" << endl;
+    cout << "6. Print Event List" << endl;
+    cout << "7. Print Event List based on Location" << endl;
+    cout << "8. Print Event List based on Color" << endl;
+    cout << "9. Print Nearest Event" << endl;
+    cout << "10. Print Event List based on View Type" << endl;
+
+    string choice;
+    cin >> choice;
+    if (choice == "1") {
+        string title, desc, location;
+        int color;
+        Date startDate, endDate;
+
+        cout << "Title: ";
+        cin >> title;
+        cout << "Description: ";
+        cin >> desc;
+        cout << "Location: ";
+        cin >> location;
+        cout << "Color (0: Red, 1: Yellow, 2: Blue, 3: Green, 4: Purple): ";
+        cin >> color;
+        cout << "Start Date (dd mm yyyy): ";
+        cin >> startDate.day >> startDate.month >> startDate.year;
+        cout << "End Date (dd mm yyyy): ";
+        cin >> endDate.day >> endDate.month >> endDate.year;
+
+        Event newEvent(title, desc, (mark)color, location, startDate, endDate);
+        eventList.addEvent(newEvent);
+    } else if (choice == "2") {
+        string oldTitle, newTitle;
+        cout << "Old Title: ";
+        cin >> oldTitle;
+        cout << "New Title: ";
+        cin >> newTitle;
+        eventList.updateTitle(oldTitle, newTitle);
+    } else if (choice == "3") {
+        string title, newDesc;
+        cout << "Title: ";
+        cin >> title;
+        cout << "New Description: ";
+        cin >> newDesc;
+        eventList.updateDesc(title, newDesc);
+    } else if (choice == "4") {
+        string title;
+        cout << "Title: ";
+        cin >> title;
+        eventList.removeEventByTitle(title);
+    } else if (choice == "5") {
+        string title;
+        cout << "Title: ";
+        cin >> title;
+        eventList.searchByTitle(title);
+    } else if (choice == "6") {
+        eventList.printEventList();
+    } else if (choice == "7") {
+        string location;
+        cout << "Location: ";
+        cin >> location;
+        eventList.printBasedOnLocation(location);
+    } else if (choice == "8") {
+        int color;
+        cout << "Color (0: Red, 1: Yellow, 2: Blue, 3: Green, 4: Purple): ";
+        cin >> color;
+        eventList.printBasedOnColor((mark)color);
+    } else if (choice == "9") {
+        eventList.printNearestEvent();
+    } else if (choice == "10") {
+        int viewType;
+        cout << "View Type (0: Month, 1: Week, 2: Day, 3: Year): ";
+        cin >> viewType;
+        eventList.printEventList((ViewType)viewType);
+    }
+}
+
+void handleTaskMenu() {
+    cout << "Task Menu: " << endl;
+    cout << "1. Add Task" << endl;
+    cout << "2. Update Task Title" << endl;
+    cout << "3. Update Task Description" << endl;
+    cout << "4. Remove Task" << endl;
+    cout << "5. Search Task by Title" << endl;
+    cout << "6. Print Task List" << endl;
+    cout << "7. Print Task List based on Color" << endl;
+    cout << "8. Print Nearest Task" << endl;
+    cout << "9. Print Task List based on View Type" << endl;
+
+    string choice;
+    cin >> choice;
+    cin.ignore();
+    if (choice == "1") {
+        string title, desc;
+        int color;
+        DateTime deadline;
+
+        cout << "Title: ";
+        getline(cin, title);
+        cout << "Description: ";
+        getline(cin, desc);
+        cout << "Color (0: Red, 1: Yellow, 2: Blue, 3: Green, 4: Purple): ";
+        cin >> color;
+        cout << "Deadline Date (dd mm yyyy): ";
+        cin >> deadline.date.day >> deadline.date.month >> deadline.date.year;
+        cout << "Deadline Time (hh mm): ";
+        cin >> deadline.time.hour >> deadline.time.minute;
+
+        Task newTask(deadline, title, desc, (mark)color);
+        taskList.addTask(newTask);
+    } else if (choice == "2") {
+        string oldTitle, newTitle;
+        cout << "Old Title: ";
+        getline(cin, oldTitle);
+        cout << "New Title: ";
+        getline(cin, newTitle);
+        taskList.updateTitle(oldTitle, newTitle);
+    } else if (choice == "3") {
+        string title, newDesc;
+        cout << "Title: ";
+        getline(cin, title);
+        cout << "New Description: ";
+        getline(cin, newDesc);
+        taskList.updateDesc(title, newDesc);
+    } else if (choice == "4") {
+        string title;
+        cout << "Title: ";
+        getline(cin, title);
+        taskList.removeTaskByTitle(title);
+    } else if (choice == "5") {
+        string title;
+        cout << "Title: ";
+        getline(cin, title);
+        taskList.searchByTitle(title);
+    } else if (choice == "6") {
+        taskList.printTaskList();
+    } else if (choice == "7") {
+        int color;
+        cout << "Color (0: Red, 1: Yellow, 2: Blue, 3: Green, 4: Purple): ";
+        cin >> color;
+        taskList.printBasedOnColor((mark)color);
+    } else if (choice == "8") {
+        taskList.printNearestTask();
+    } else if (choice == "9") {
+        int viewType;
+        cout << "View Type (0: Month, 1: Week, 2: Day, 3: Year): ";
+        cin >> viewType;
+        taskList.printTaskList((ViewType)viewType);
+    }
 }
