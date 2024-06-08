@@ -555,6 +555,9 @@ void handleEventMenu() {
 
     string choice;
     cin >> choice;
+    cin.ignore();
+    cout << "-----------------------------------------------------------" << endl;
+
     if (choice == "1") {
         string title, desc, location;
         int color;
@@ -562,11 +565,11 @@ void handleEventMenu() {
 
         cout << "--- Add Event ---" << endl;
         cout << "Title: ";
-        cin >> title;
+        getline(cin, title);
         cout << "Description: ";
-        cin >> desc;
+        getline(cin, desc);
         cout << "Location: ";
-        cin >> location;
+        getline(cin, location);
         cout << "Color (0: Red, 1: Yellow, 2: Blue, 3: Green, 4: Purple): ";
         cin >> color;
         cout << "Start Date (dd mm yyyy): ";
@@ -580,46 +583,54 @@ void handleEventMenu() {
         cout << "--- Update Event Title ---" << endl;
         string oldTitle, newTitle;
         cout << "Old Title: ";
-        cin >> oldTitle;
+        getline(cin, oldTitle);
         cout << "New Title: ";
-        cin >> newTitle;
+        getline(cin, newTitle);
         eventList.updateTitle(oldTitle, newTitle);
         cout << "--- Event Title Updated ---" << endl;
         eventList.searchByTitle(newTitle);
     } else if (choice == "3") {
+        cout << "--- Update Event Description ---" << endl;
         string title, newDesc;
         cout << "Title: ";
-        cin >> title;
+        getline(cin, title);
         cout << "New Description: ";
-        cin >> newDesc;
+        getline(cin, newDesc);
         eventList.updateDesc(title, newDesc);
         cout << "--- Event Description Updated ---" << endl;
         eventList.searchByTitle(title);
     } else if (choice == "4") {
+        cout << "--- Remove Event ---" << endl;
         string title;
         cout << "Title: ";
-        cin >> title;
+        getline(cin, title);
         eventList.removeEventByTitle(title);
     } else if (choice == "5") {
+        cout << "--- Search Event by Title ---" << endl;
         string title;
         cout << "Title: ";
-        cin >> title;
+        getline(cin, title);
         eventList.searchByTitle(title);
     } else if (choice == "6") {
+        cout << "--- Print Event List ---" << endl;
         eventList.printEventList();
     } else if (choice == "7") {
+        cout << "--- Print Event List based on Location ---" << endl;
         string location;
         cout << "Location: ";
-        cin >> location;
+        getline(cin, location);
         eventList.printBasedOnLocation(location);
     } else if (choice == "8") {
+        cout << "--- Print Event List based on Color ---" << endl;
         int color;
         cout << "Color (0: Red, 1: Yellow, 2: Blue, 3: Green, 4: Purple): ";
         cin >> color;
         eventList.printBasedOnColor((mark)color);
     } else if (choice == "9") {
+        cout << "--- Print Nearest Event ---" << endl;
         eventList.printNearestEvent();
     } else if (choice == "10") {
+        cout << "--- Print Event List based on View Type ---" << endl;
         int viewType;
         cout << "View Type (0: Month, 1: Week, 2: Day, 3: Year): ";
         cin >> viewType;
