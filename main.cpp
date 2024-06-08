@@ -511,13 +511,16 @@ int main() {
 
     string choice;
     do {
+        cout << "-----------------------------------------------------------" << endl;
         cout << "Menu: " << endl;
         cout << "1. Event Menu" << endl;
         cout << "2. Task Menu" << endl;
         cout << "Q. Quit" << endl;
         
+        cout << "-----------------------------------------------------------" << endl;
         cout << "Choice: ";
         cin >> choice;
+        
         transform(choice.begin(), choice.end(), choice.begin(), ::toupper);
 
         if (choice == "1") {
@@ -536,6 +539,7 @@ int main() {
 }
 
 void handleEventMenu() {
+    cout << "-----------------------------------------------------------" << endl;
     cout << "Event Menu: " << endl;
     cout << "1. Add Event" << endl;
     cout << "2. Update Event Title" << endl;
@@ -547,6 +551,7 @@ void handleEventMenu() {
     cout << "8. Print Event List based on Color" << endl;
     cout << "9. Print Nearest Event" << endl;
     cout << "10. Print Event List based on View Type" << endl;
+    cout << "-----------------------------------------------------------" << endl;
 
     string choice;
     cin >> choice;
@@ -555,6 +560,7 @@ void handleEventMenu() {
         int color;
         Date startDate, endDate;
 
+        cout << "--- Add Event ---" << endl;
         cout << "Title: ";
         cin >> title;
         cout << "Description: ";
@@ -571,12 +577,15 @@ void handleEventMenu() {
         Event newEvent(title, desc, (mark)color, location, startDate, endDate);
         eventList.addEvent(newEvent);
     } else if (choice == "2") {
+        cout << "--- Update Event Title ---" << endl;
         string oldTitle, newTitle;
         cout << "Old Title: ";
         cin >> oldTitle;
         cout << "New Title: ";
         cin >> newTitle;
         eventList.updateTitle(oldTitle, newTitle);
+        cout << "--- Event Title Updated ---" << endl;
+        eventList.searchByTitle(newTitle);
     } else if (choice == "3") {
         string title, newDesc;
         cout << "Title: ";
@@ -584,6 +593,8 @@ void handleEventMenu() {
         cout << "New Description: ";
         cin >> newDesc;
         eventList.updateDesc(title, newDesc);
+        cout << "--- Event Description Updated ---" << endl;
+        eventList.searchByTitle(title);
     } else if (choice == "4") {
         string title;
         cout << "Title: ";
@@ -617,6 +628,7 @@ void handleEventMenu() {
 }
 
 void handleTaskMenu() {
+    cout << "-----------------------------------------------------------" << endl;
     cout << "Task Menu: " << endl;
     cout << "1. Add Task" << endl;
     cout << "2. Update Task Title" << endl;
@@ -627,15 +639,20 @@ void handleTaskMenu() {
     cout << "7. Print Task List based on Color" << endl;
     cout << "8. Print Nearest Task" << endl;
     cout << "9. Print Task List based on View Type" << endl;
+    cout << "-----------------------------------------------------------" << endl;
 
     string choice;
+    cout << "Choose menu: ";
     cin >> choice;
     cin.ignore();
+    cout << "-----------------------------------------------------------" << endl;
+
     if (choice == "1") {
         string title, desc;
         int color;
         DateTime deadline;
 
+        cout << "--- Add Task ---" << endl;
         cout << "Title: ";
         getline(cin, title);
         cout << "Description: ";
@@ -650,42 +667,57 @@ void handleTaskMenu() {
         Task newTask(deadline, title, desc, (mark)color);
         taskList.addTask(newTask);
     } else if (choice == "2") {
+        cout << "--- Update Task Title ---" << endl;
         string oldTitle, newTitle;
         cout << "Old Title: ";
         getline(cin, oldTitle);
         cout << "New Title: ";
         getline(cin, newTitle);
         taskList.updateTitle(oldTitle, newTitle);
+        cout << "--- Task Title Updated ---" << endl;
+        taskList.searchByTitle(newTitle);
     } else if (choice == "3") {
         string title, newDesc;
+        cout << "--- Update Task Description ---" << endl;
         cout << "Title: ";
         getline(cin, title);
         cout << "New Description: ";
         getline(cin, newDesc);
         taskList.updateDesc(title, newDesc);
+        cout << "--- Task Description Updated ---" << endl;
+        taskList.searchByTitle(title);
     } else if (choice == "4") {
+        cout << "--- Remove Task ---" << endl;
         string title;
         cout << "Title: ";
         getline(cin, title);
         taskList.removeTaskByTitle(title);
     } else if (choice == "5") {
         string title;
+        cout << "--- Search Task by Title ---" << endl;
         cout << "Title: ";
         getline(cin, title);
+        cout << endl;
         taskList.searchByTitle(title);
     } else if (choice == "6") {
+        cout << endl;
+        cout << "--- Print Task List ---" << endl;
         taskList.printTaskList();
     } else if (choice == "7") {
         int color;
+        cout << "--- Print Task List based on Color ---" << endl;
         cout << "Color (0: Red, 1: Yellow, 2: Blue, 3: Green, 4: Purple): ";
         cin >> color;
+        cout << endl;
         taskList.printBasedOnColor((mark)color);
     } else if (choice == "8") {
         taskList.printNearestTask();
     } else if (choice == "9") {
         int viewType;
+        cout << "--- Print Task List based on View Type ---" << endl;
         cout << "View Type (0: Month, 1: Week, 2: Day, 3: Year): ";
         cin >> viewType;
+        cout << endl;
         taskList.printTaskList((ViewType)viewType);
     }
 }
