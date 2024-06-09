@@ -28,6 +28,7 @@ class Activity {
         }
 
         // Getter
+        string getDesc() { return desc; }
         string getTitle() { return title; }
         mark getColor() { return color; }
         string getColorString(mark inpColor) {
@@ -364,6 +365,46 @@ class EventList {
                 }
             }
         }
+
+        void saveToFile() {
+            ofstream file;
+            file.open("event.txt");
+
+            for (int i = 0; i < eventList.size(); i++) {
+                file << eventList[i].getTitle() << endl;
+                file << eventList[i].getDesc() << endl;
+                file << eventList[i].getLocation() << endl;
+                file << eventList[i].getColor() << endl;
+                file << eventList[i].getStartDateDay() << " " << eventList[i].getStartDateMonth() << " " << eventList[i].getStartDateYear() << endl;
+                file << eventList[i].getEndDateDay() << " " << eventList[i].getEndDateMonth() << " " << eventList[i].getEndDateYear() << endl;
+            }
+
+            file.close();
+        }
+
+        void loadFromFile() {
+            ifstream file;
+            file.open("event.txt");
+
+            string title, desc, location;
+            int color;
+            Date startDate, endDate;
+
+            while (getline(file, title)) {
+                getline(file, desc);
+                getline(file, location);
+                file >> color;
+                file >> startDate.day >> startDate.month >> startDate.year;
+                file >> endDate.day >> endDate.month >> endDate.year;
+
+                file.ignore();
+
+                Event newEvent(title, desc, (mark)color, location, startDate, endDate);
+                eventList.push_back(newEvent);
+            }
+
+            file.close();
+        }
 };
 
 class TaskList {
@@ -487,6 +528,44 @@ class TaskList {
                 }
             }
         }
+
+        void saveToFile() {
+            ofstream file;
+            file.open("task.txt");
+
+            for (int i = 0; i < taskList.size(); i++) {
+                file << taskList[i].getTitle() << endl;
+                file << taskList[i].getDesc() << endl;
+                file << taskList[i].getColor() << endl;
+                file << taskList[i].getDeadline().day << " " << taskList[i].getDeadline().month << " " << taskList[i].getDeadline().year << endl;
+                file << taskList[i].getDeadline().hour << " " << taskList[i].getDeadline().minute << endl;
+            }
+
+            file.close();
+        }
+
+        void loadFromFile() {
+            ifstream file;
+            file.open("task.txt");
+
+            string title, desc;
+            int color;
+            DateTime deadline;
+
+            while (getline(file, title)) {
+                getline(file, desc);
+                file >> color;
+                file >> deadline.date.day >> deadline.date.month >> deadline.date.year;
+                file >> deadline.time.hour >> deadline.time.minute;
+
+                file.ignore();
+
+                Task newTask(deadline, title, desc, (mark)color);
+                taskList.push_back(newTask);
+            }
+
+            file.close();
+        }
 };
 
 void handleEventMenu();
@@ -500,7 +579,7 @@ int main() {
         IT 02 Strukdat Final Project:
         - Dimas Andhika Diputra
         - Ryan Adya Purwanto
-        - Nafi Firdaus
+        - Muhammad Nafi Firdaus
     */
 
     cout << "-----------------------------------------------------------" << endl;
@@ -508,6 +587,9 @@ int main() {
     cout << "-----------------------------------------------------------" << endl;
     cout << "------- Google Calendar System implemented with OOP -------" << endl;
     cout << "-----------------------------------------------------------" << endl;
+
+    eventList.loadFromFile();
+    taskList.loadFromFile();
 
     string choice;
     do {
@@ -528,6 +610,8 @@ int main() {
         } else if (choice == "2") {
             handleTaskMenu();
         } else if (choice == "Q") {
+            eventList.saveToFile();
+            taskList.saveToFile();
             cout << "Goodbye!" << endl;
             break;
         } else {
