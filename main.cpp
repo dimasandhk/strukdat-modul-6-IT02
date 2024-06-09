@@ -638,6 +638,7 @@ void handleEventMenu() {
     cout << "-----------------------------------------------------------" << endl;
 
     string choice;
+    cout << "Choose menu: ";
     cin >> choice;
     cin.ignore();
     cout << "-----------------------------------------------------------" << endl;
